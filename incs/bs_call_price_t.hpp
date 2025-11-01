@@ -8,8 +8,8 @@
 #include <complex>
 #include "bs_call_price.h"
 
-template<typename T>
-inline T Phi_t(T z) {
+template<typename Cpx>
+inline Cpx Phi_t(Cpx z) {
 	return Phi_real(static_cast<double>(z));
 }
 
@@ -21,36 +21,36 @@ inline std::complex<double> Phi_t(std::complex<double> z) {
 	return std::complex<double>(Phi_real(z_r), z_i * phi(z_r));
 }
 
-template<typename T>
-inline T F_calc_t(T S, T r, T q, T Tmat) {
-    return S * std::exp((r - q) * Tmat);
+template<typename Cpx>
+inline Cpx F_calc_t(Cpx S, Cpx r, Cpx q, Cpx T) {
+    return S * std::exp((r - q) * T);
 }
 
-template<typename T>
-inline T sigmaT_calc_t(T sigma, T Tmat) {
-    return sigma * std::sqrt(Tmat);
+template<typename Cpx>
+inline Cpx sigmaT_calc_t(Cpx sigma, Cpx T) {
+    return sigma * std::sqrt(T);
 }
 
-template<typename T>
-inline T ln_F_over_K_calc_t(T F, T K) {
+template<typename Cpx>
+inline Cpx ln_F_over_K_calc_t(Cpx F, Cpx K) {
     return std::log(F / K);
 }
 
-template<typename T>
-inline T d1_calc_t(T ln_F_over_K, T sigma, T Tmat, T sigmaT) {
-    return (ln_F_over_K + T(0.5) * sigma * sigma * Tmat) / sigmaT;
+template<typename Cpx>
+inline Cpx d1_calc_t(Cpx ln_F_over_K, Cpx sigma, Cpx T, Cpx sigmaT) {
+    return (ln_F_over_K + Cpx(0.5) * sigma * sigma * T) / sigmaT;
 }
 
-template<class T>
-inline T bs_price_call_t(T S, T K, T r, T q, T sigma, T Tmat) {
-    const T DF     = std::exp(-r * Tmat);
-    const T F      = F_calc_t(S, r, q, Tmat);
-    const T sigmaT = sigmaT_calc_t(sigma, Tmat);
+template<class Cpx>
+inline Cpx bs_price_call_t(Cpx S, Cpx K, Cpx r, Cpx q, Cpx sigma, Cpx T) {
+    const Cpx DF     = std::exp(-r * T);
+    const Cpx F      = F_calc_t(S, r, q, T);
+    const Cpx sigmaT = sigmaT_calc_t(sigma, T);
 
-    const T ln_F_over_K = ln_F_over_K_calc_t(F, K);
+    const Cpx ln_F_over_K = ln_F_over_K_calc_t(F, K);
 
-    const T d1 = d1_calc_t(ln_F_over_K, sigma, Tmat, sigmaT);
-    const T d2 = d1 - sigmaT;
+    const Cpx d1 = d1_calc_t(ln_F_over_K, sigma, T, sigmaT);
+    const Cpx d2 = d1 - sigmaT;
 
     return DF * (F * Phi_t(d1) - K * Phi_t(d2));
 }
