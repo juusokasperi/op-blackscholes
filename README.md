@@ -45,6 +45,13 @@ Juuso Rinta<br />
 ### Stability issues
 - The Γ_fd and Γ_cs_real methods produced extreme values for small h due to roundoff error.
 - The Γ_cs_45 method also failed at the absolute smallest h, where its error jumped. This is also a type of roundoff error (loss of precision on addition), a stability failure at the machine's limit.
+### Program optimization
+- I investigated potential performance optimizations for the data generation sweep. I suspected that either redundant calculations or file I/O could be bottlenecks.
+- **Attempted Optimizations:**
+	- **Caching:** I implemented a version that pre-calculated the base Black-Scholes price and passed it to the Greek calculation functions to avoid redundant calls (where applicable).
+	- **I/O Buffering:** I tested buffering all output in a `std::stringstream` and writing to the file in a single operation at the end of the sweep.
+- **Results:** Upon benchmarking, the performance difference between the original code and the optimized versions was negligible (total sweep time remained in the 0.7-2ms range).
+- **Conclusion:** The current implementation is not bottlenecked by these factors at this scale. For the sake of code clarity and simplicity, I chose to retain the original, more straightforward implementation, as the attempted optimizations added complexity without providing a meaningful performance benefit.
 
 # Brief reasoning
 - Truncation Error: Mathematical error from using an approximation. The finite-difference formulas are not exact; they have error terms (e.g., O(h2)). When h is large, this error dominates. This explains the right side of the "U-shaped" curves.
