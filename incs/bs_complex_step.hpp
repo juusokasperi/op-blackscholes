@@ -1,6 +1,6 @@
 #pragma once
 /**
- * @file bs_forward_diff.hpp
+ * @file bs_complex_step.hpp
  * @brief Black-Scholes Complex Step.
  *
  */
@@ -9,9 +9,11 @@
 #include "bs_call_price_t.hpp"
 #include "bs_call_price.h"
 
-const std::complex<double>	I(0.0, 1.0);
-const double				INV_SQRT_2 = 1.0 / std::sqrt(2.0);
-const std::complex<double>	OMEGA = (1.0 + I) * INV_SQRT_2;
+namespace {
+	const std::complex<double>	I(0.0, 1.0);
+	const double				INV_SQRT_2 = 1.0 / std::sqrt(2.0);
+	const std::complex<double>	OMEGA = (1.0 + I) * INV_SQRT_2;
+}
 
 inline double bs_delta_cs(double S, double K, double r, double q, double sigma, double Tmat, double h) {
 	std::complex<double>	S_cs = std::complex<double>(S, 0.0) + I * h;

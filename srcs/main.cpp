@@ -11,28 +11,28 @@
 
 using namespace std;
 
-void run_validation_sweep(double S, double K, double r, double q, double sigma, double T, const std::string &filename)
+void run_validation_sweep(double S, double K, double r, double q, double sigma, double T, const string &filename)
 {
-	std::ofstream	outfile(filename);
+	constexpr double	LOG_H_MIN = -16.0;
+	constexpr double	LOG_H_MAX = -4.0;
+	constexpr int		NUM_STEPS = 24;
+
+	ofstream	outfile(filename);
 	if (!outfile)
-		throw std::runtime_error("Unable to open an output filestream with given filename " + filename);
+		throw runtime_error("Unable to open an output filestream with given filename " + filename);
 	outfile	<< "h_rel,h,"
 			<< "Delta_analytic,Delta_fd,Delta_cs,"
 			<< "err_D_fd,err_D_cs,"
 			<< "Gamma_analytic,Gamma_fd,Gamma_cs_real,Gamma_cs_45,"
 			<< "err_G_fd,err_G_cs_real,err_G_cs_45\n";
-	outfile	<< std::fixed << std::setprecision(16);
+	outfile	<< fixed << setprecision(16);
 
 	const double	delta_analytic = bs_delta_analytic(S, K, r, q, sigma, T);
 	const double	gamma_analytic = bs_gamma_analytic(S, K, r, q, sigma, T);
 
-	const double	log_h_min = -16.0;
-	const double	log_h_max = -4.0;
-
-	const int		num_steps = 24;
-	for (int i = 0; i < num_steps; ++i) {
-		double log_h = log_h_min + (log_h_max - log_h_min) * static_cast<double>(i) / (num_steps - 1);
-		double h_rel = std::pow(10.0, log_h);
+	for (int i = 0; i < NUM_STEPS; ++i) {
+		double log_h = LOG_H_MIN + (LOG_H_MAX - LOG_H_MIN) * static_cast<double>(i) / (NUM_STEPS - 1);
+		double h_rel = pow(10.0, log_h);
 		double h = h_rel * S;
 
 		double delta_fd = bs_delta_fd(S, K, r, q, sigma, T, h);
@@ -42,12 +42,12 @@ void run_validation_sweep(double S, double K, double r, double q, double sigma, 
 		double gamma_cs_real = bs_gamma_cs_real(S, K, r, q, sigma, T, h);
 		double gamma_cs_45 = bs_gamma_cs_45(S, K, r, q, sigma, T, h);
 
-		double err_D_fd = std::abs(delta_fd - delta_analytic);
-		double err_D_cs = std::abs(delta_cs - delta_analytic);
+		double err_D_fd = abs(delta_fd - delta_analytic);
+		double err_D_cs = abs(delta_cs - delta_analytic);
 
-		double err_G_fd = std::abs(gamma_fd - gamma_analytic);
-		double err_G_cs_real = std::abs(gamma_cs_real - gamma_analytic);
-		double err_G_cs_45 = std::abs(gamma_cs_45 - gamma_analytic);
+		double err_G_fd = abs(gamma_fd - gamma_analytic);
+		double err_G_cs_real = abs(gamma_cs_real - gamma_analytic);
+		double err_G_cs_45 = abs(gamma_cs_45 - gamma_analytic);
 
 		outfile	<< h_rel << "," << h << ","
 				<< delta_analytic << "," << delta_fd << "," << delta_cs << ","
@@ -67,7 +67,7 @@ int main() {
 	try {
 		double S = 100.0, K = 100.0, r = 0, q = 0, sigma = 0.20, T = 1;
 		run_validation_sweep(S, K, r, q, sigma, T, "bs_fd_vs_complex_scenario1.csv");
-	} catch (const std::exception &e) {
+	} catch (const exception &e) {
 		cerr << "Error: " << e.what() << "\n";
 		error = true;
 		errorMsg = "scenario 1";
@@ -75,7 +75,7 @@ int main() {
 	try {
 		double S = 100.0, K = 100.0, r = 0, q = 0, sigma = 0.01, T = 1.0 / 365.0;
 		run_validation_sweep(S, K, r, q, sigma, T, "bs_fd_vs_complex_scenario2.csv");
-	} catch (const std::exception &e) {
+	} catch (const exception &e) {
 		cerr << "Error: " << e.what() << "\n";
 		error = true;
 		if (!errorMsg.empty())
