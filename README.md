@@ -3,11 +3,33 @@ OP Kiitorata, Qualitative Developer Position<br />
 Juuso Rinta<br />
 28.10.2025
 
+## How to Build and Run
+### Prerequisites
+- A C++ compiler
+- `make`
+- `python3`
+- Python libraries: `pandas`, `matplotlib`
+
+You can install the required Python libraries using pip:
+```bash
+pip install pandas matplotlib
+```
+
+### Instructions
+1.  **Compile and Run C++ Program:**
+    From the project root, run `make`. This will compile the C++ source and run the executable. It generates two `.csv` data files in the `data/` directory.
+
+2.  **Generate Plots:**
+    Run the Python script to process the data and generate plots. The plots will also be saved in the `data/` directory.
+    ```bash
+    python3 plot_errors.py
+    ```
+
 # Plots and tables
 
 ## Scenario 1
 
-<img src="./scenario1_(atm)_error_plots.png" width="400" alt="scenario 1 plot" />
+<img src="./data/scenario1_(atm)_error_plots.png" width="400" alt="scenario 1 plot" />
 
 | Method        | Max Error (Worst) | Median Error      | Min Error (Best)  |
 |:-------------:|:-----------------:|:-----------------:|:-----------------:|
@@ -19,7 +41,7 @@ Juuso Rinta<br />
 
 ## Scenario 2
 
-<img src="./scenario2_(stress)_error_plots.png" width="400" alt="scenario 2 plot" />
+<img src="./data/scenario2_(stress)_error_plots.png" width="400" alt="scenario 2 plot" />
 
 | Method        | Max Error (Worst) | Median Error      | Min Error (Best)  |
 |:-------------:|:-----------------:|:-----------------:|:-----------------:|
