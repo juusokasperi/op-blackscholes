@@ -1,5 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+from pathlib import Path
 
 def print_summary_table(data, scenario_title):
 	print(f"\n--- Error Summary Table for {scenario_title} ---")
@@ -26,47 +27,61 @@ def print_summary_table(data, scenario_title):
 	print("| ------------------------------------------------------------------------- |\n")
 
 
-def create_plots(csv_filename, scenario_title):
+def create_plots(csv_filename, scenario_title, output_dir="data"):
 	try:
 		data = pd.read_csv(csv_filename)
 	except FileNotFoundError:
 		print(f"Error: Could not find file '{csv_filename}'")
 		return
 
+	if data.empty:
+		print(f"Error: File '{csv_filename}' contains no data")
+
+	required_cols = ['h_rel', 'err_D_fd', 'err_D_cs', 'err_G_fd', 'err_G_cs_real', 'err_G_cs_45']
+	missing_cols = [col for col in required_cols if col not in data.columns]
+	if missing_cols:
+		print(f"Error: Missing columns: {missing_cols}")
+		return
+
 	print_summary_table(data, scenario_title)
 
-	fig, (ax_delta, ax_gamma) = plt.subplots(1, 2, figsize=(16, 7))
-	fig.suptitle(f'Error Analysis for {scenario_title}', fontsize=16)
+	output_path = Path(output_dir)
+	output_path.mkdir(parents=True, exist_ok=True)
 
-	ax_delta.set_title('Delta Δ Errors')
-	ax_delta.plot(data['h_rel'], data['err_D_fd'], label='Δ_fd (Finite Diff)', marker='o', markersize=4)
-	ax_delta.plot(data['h_rel'], data['err_D_cs'], label='Δ_cs (Complex Step)', marker='x', markersize=4)
+	with plt.style.context('seaborn-v0_8-darkgrid'):
+		fig, (ax_delta, ax_gamma) = plt.subplots(1, 2, figsize=(16, 7))
+		fig.suptitle(f'Error Analysis for {scenario_title}', fontsize=16)
 
-	ax_delta.set_xscale('log')
-	ax_delta.set_yscale('log')
-	ax_delta.set_xlabel('Relative Step Size (h_rel)')
-	ax_delta.set_ylabel('Absolute Error')
-	ax_delta.legend()
-	ax_delta.grid(True, which="both", ls="--", alpha=0.5)
+		ax_delta.set_title('Delta Δ Errors')
+		ax_delta.plot(data['h_rel'], data['err_D_fd'], label='Δ_fd (Finite Diff)', marker='o', markersize=4)
+		ax_delta.plot(data['h_rel'], data['err_D_cs'], label='Δ_cs (Complex Step)', marker='x', markersize=4)
 
-	ax_gamma.set_title('Gamma Γ Errors')
-	ax_gamma.plot(data['h_rel'], data['err_G_fd'], label='Γ_fd (Finite Diff)', marker='o', markersize=4)
-	ax_gamma.plot(data['h_rel'], data['err_G_cs_real'], label='Γ_cs_real (Complex Step Real)', marker='s', markersize=4)
-	ax_gamma.plot(data['h_rel'], data['err_G_cs_45'], label='Γ_cs_45 (Complex Step 45◦)', marker='x', markersize=4)
+		ax_delta.set_xscale('log')
+		ax_delta.set_yscale('log')
+		ax_delta.set_xlabel('Relative Step Size (h_rel)')
+		ax_delta.set_ylabel('Absolute Error')
+		ax_delta.legend()
+		ax_delta.grid(True, which="both", ls="--", alpha=0.5)
 
-	ax_gamma.set_xscale('log')
-	ax_gamma.set_yscale('log')
-	ax_gamma.set_xlabel('Relative Step Size (h_rel)')
-	ax_gamma.set_ylabel('Absolute Error')
-	ax_gamma.legend()
-	ax_gamma.grid(True, which="both", ls="--", alpha=0.5)
+		ax_gamma.set_title('Gamma Γ Errors')
+		ax_gamma.plot(data['h_rel'], data['err_G_fd'], label='Γ_fd (Finite Diff)', marker='o', markersize=4)
+		ax_gamma.plot(data['h_rel'], data['err_G_cs_real'], label='Γ_cs_real (Complex Step Real)', marker='s', markersize=4)
+		ax_gamma.plot(data['h_rel'], data['err_G_cs_45'], label='Γ_cs_45 (Complex Step 45◦)', marker='x', markersize=4)
 
-	outfile = f"{scenario_title.replace(' ', '_').lower()}_error_plots.png"
-	plt.savefig(outfile)
+		ax_gamma.set_xscale('log')
+		ax_gamma.set_yscale('log')
+		ax_gamma.set_xlabel('Relative Step Size (h_rel)')
+		ax_gamma.set_ylabel('Absolute Error')
+		ax_gamma.legend()
+		ax_gamma.grid(True, which="both", ls="--", alpha=0.5)
+
+		filename = f"{scenario_title.replace(' ', '_').lower()}_error_plots.png"
+		outfile = output_path / filename
+		plt.tight_layout()
+		plt.savefig(outfile, bbox_inches='tight')
 	print(f"Saved plot to {outfile}")
+	plt.close(fig)
 
-	plt.tight_layout()
-	plt.show()
 
 if __name__ == "__main__":
 

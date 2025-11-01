@@ -2,6 +2,8 @@
 #include <fstream>
 #include <iomanip>
 #include <cmath>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 #include "bs_analytic.hpp"
 #include "bs_call_price_t.hpp"
@@ -10,6 +12,21 @@
 #include "bs_forward_diff.hpp"
 
 using namespace std;
+
+bool create_directory(const string& dir_path) {
+	#ifdef _WIN32
+		int result = _mkdir(dir_path.c_str());
+	#else
+		int result = mkdir(dir_path.c_str(), 0755);
+	#endif
+
+	if (result == 0)
+		return true;
+	else if (errno == EEXIST)
+		return true;
+	else
+		return false;
+}
 
 void run_validation_sweep(double S, double K, double r, double q, double sigma, double T, const string &filename)
 {
@@ -64,9 +81,16 @@ int main() {
 	cout << "-- Running Black-Scholes Assignment --\n";
 	bool error = false;
 	string errorMsg;
+	string path;
+
+	if (!create_directory("data")) {
+		cerr << "  Warning: Could not create 'data' directory, .csv files will be saved in current directory.\n";
+	} else
+		path = "data/";
 	try {
 		double S = 100.0, K = 100.0, r = 0, q = 0, sigma = 0.20, T = 1;
-		run_validation_sweep(S, K, r, q, sigma, T, "bs_fd_vs_complex_scenario1.csv");
+		string outfile = path + "bs_fd_vs_complex_scenario1.csv";
+		run_validation_sweep(S, K, r, q, sigma, T, outfile);
 	} catch (const exception &e) {
 		cerr << "Error: " << e.what() << "\n";
 		error = true;
@@ -74,7 +98,8 @@ int main() {
 	}
 	try {
 		double S = 100.0, K = 100.0, r = 0, q = 0, sigma = 0.01, T = 1.0 / 365.0;
-		run_validation_sweep(S, K, r, q, sigma, T, "bs_fd_vs_complex_scenario2.csv");
+		string outfile = path + "bs_fd_vs_complex_scenario1.csv";
+		run_validation_sweep(S, K, r, q, sigma, T, path + "bs_fd_vs_complex_scenario2.csv");
 	} catch (const exception &e) {
 		cerr << "Error: " << e.what() << "\n";
 		error = true;
