@@ -76,7 +76,7 @@ pip install pandas matplotlib
 - **Conclusion:** The current implementation is not bottlenecked by these factors at this scale. For the sake of code clarity and simplicity, I chose to retain the original, more straightforward implementation, as the attempted optimizations added complexity without providing a meaningful performance benefit.
 
 # Brief reasoning
-- Truncation Error: Mathematical error from using an approximation. The finite-difference formulas are not exact; they have error terms (e.g., $O(h^2)$). When $h$ is large, this error dominates. This explains the right side of the "U-shaped" curves.
+- Truncation Error: Mathematical error from using an approximation. The finite-difference formulas are not exact; they have error terms (e.g., ${O}(h^{2}) $). When $h$ is large, this error dominates. This explains the right side of the "U-shaped" curves.
 - Roundoff Error: This is the computer error. Methods that require subtracting two numbers that become nearly identical as $h → 0$. A computer loses all its significant digits in this subtraction, and the result is "numerical noise" or garbage. This explains the left side of the "U-shaped" curves, where the error explodes for tiny $h$.
 - The complex-step method (Δ_cs) works because its formula avoids subtraction. It has no roundoff error, so its error is just the truncation error, which gets smaller and smaller as h decreases. The Γ_cs_45 method is also designed to avoid this subtraction, which is why it is trillions of times more stable than Γ_fd.
 
