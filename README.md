@@ -29,7 +29,7 @@ pip install pandas matplotlib
 
 ## Scenario 1
 
-<img src="./data/scenario1_(atm)_error_plots.png" width="400" alt="scenario 1 plot" />
+<img src="./data/scenario_1_(atm)_error_plots.png" width="400" alt="scenario 1 plot" />
 
 | Method        | Max Error (Worst) | Median Error      | Min Error (Best)  |
 |:-------------:|:-----------------:|:-----------------:|:-----------------:|
@@ -41,7 +41,7 @@ pip install pandas matplotlib
 
 ## Scenario 2
 
-<img src="./data/scenario2_(stress)_error_plots.png" width="400" alt="scenario 2 plot" />
+<img src="./data/scenario_2_(stress)_error_plots.png" width="400" alt="scenario 2 plot" />
 
 | Method        | Max Error (Worst) | Median Error      | Min Error (Best)  |
 |:-------------:|:-----------------:|:-----------------:|:-----------------:|
